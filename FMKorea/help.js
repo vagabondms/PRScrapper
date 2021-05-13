@@ -26,7 +26,6 @@ module.exports = {
 
   request: async (options) => {
     const html = await request(options);
-
     return cheerio.load(html.body);
   },
 };

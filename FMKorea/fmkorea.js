@@ -1,4 +1,4 @@
-const { getView, extractData } = require("./actions");
+const { extractData } = require("./actions");
 const { request, setOption } = require("./help");
 
 const scrapFKByKeyword = async (keyword) => {
@@ -24,7 +24,8 @@ const scrapFKByKeyword = async (keyword) => {
 
     const result = curPage.concat(...otherPages);
     console.log(result);
-    return result;
+
+    // return result;
   } catch (e) {
     console.log(e);
   }
@@ -49,5 +50,3 @@ const getOtherPagesContents = async (string) => {
   }
 };
 scrapFKByKeyword("애플워치");
-
-// getPages();
