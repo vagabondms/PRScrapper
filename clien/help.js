@@ -3,9 +3,9 @@ const cheerio = require("cheerio");
 
 module.exports = {
   setOption: (keyword, page) => {
-    const url = `https://www.fmkorea.com/?vid=&mid=best&category=&listStyle=webzine&search_keyword=${encodeURI(
+    const url = `https://www.clien.net/service/search?q=${encodeURI(
       keyword
-    )}&search_target=title_content&page=${page}`;
+    )}&sort=recency&p=${page}&boardCd=&isBoard=false`;
 
     return {
       method: "GET",
@@ -20,5 +20,12 @@ module.exports = {
   request: async (options) => {
     const html = await request(options);
     return cheerio.load(html.body);
+  },
+
+  refineNum: (string) => {
+    const splittedString = string.split(" ");
+    return splittedString.length === 2
+      ? String(Number(splittedString[0]) * 1000)
+      : splittedString[0];
   },
 };

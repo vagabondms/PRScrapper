@@ -1,4 +1,4 @@
-const { setOption, request } = require("./help");
+const { refineNum } = require("./help");
 
 const getView = async ($, href) => {
   // try {
@@ -14,15 +14,17 @@ const getView = async ($, href) => {
 // html 값을 넣어주면 해당 페이지에서 내용 추출함
 const extractData = async ($) => {
   const result = [];
-  for (let el of $(".li_best2_pop0").toArray()) {
+  for (let el of $(".list_item.symph_row.jirum").toArray()) {
     let obj = {
-      title: $(el).find("a.hotdeal_var8").text().trim(),
-      date: $(el).find("span.regdate").text().trim(),
-      author: $(el).find("span.author").text().slice(3),
+      title: $(el).find("a.subject_fixed").attr("title"),
 
-      //view를 제외하면 모든 페이지가 잘 불러와짐
-      //depth를 하나 들어가면 바로 멈춰짐
-      // view: await getView($, $(el).find(".hotdeal_var8").attr("href")),
+      date: $(el).find(".timestamp").text(),
+
+      author: $(el).find(".nickname>img").attr("alt")
+        ? $(el).find(".nickname>img").attr("alt")
+        : $(el).find(".nickname>span").text(),
+
+      view: refineNum($(el).find("span.hit").text()),
     };
     result.push(obj);
   }
