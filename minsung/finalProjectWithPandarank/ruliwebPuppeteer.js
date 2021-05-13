@@ -4,6 +4,7 @@ let query = encodeURI("q=애플워치");
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
+  let result = [];
   await page.setViewport({
     width: 1920,
     height: 1080,
@@ -53,10 +54,18 @@ let query = encodeURI("q=애플워치");
       let date = await (
         await (await newPage.$(".regdate")).getProperty("textContent")
       ).jsonValue();
-      console.log(title, nickname, views, content, date);
+      result.push({
+        title: title,
+        nickname: nickname,
+        views: views,
+        content: content,
+        date: date,
+      });
+      // console.log(title, nickname, views, content, date);
       await newPage.close();
     }
     await page.close();
+    console.log(JSON.stringify(result));
   } catch (error) {
     console.log(error);
   }
