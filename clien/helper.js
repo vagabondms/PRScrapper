@@ -2,10 +2,13 @@ const request = require("requestretry");
 const cheerio = require("cheerio");
 
 module.exports = {
-  setOption: (keyword, page) => {
-    const url = `https://www.clien.net/service/search?q=${encodeURI(
-      keyword
-    )}&sort=recency&p=${page}&boardCd=&isBoard=false`;
+  setOption: (keywordOrUrI, page) => {
+    let url =
+      page === null || page === undefined
+        ? `https://www.clien.net${keywordOrUrI}`
+        : `https://www.clien.net/service/search?q=${encodeURI(
+            keywordOrUrI
+          )}&sort=recency&p=${page}&boardCd=&isBoard=false`;
 
     return {
       method: "GET",
