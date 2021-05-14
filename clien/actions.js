@@ -1,6 +1,6 @@
 const { refineNum, setOption, request } = require("./helper");
 
-const getView = async (href) => {
+const getContent = async (href) => {
   try {
     const options = setOption(href, null);
     const $$ = await request(options);
@@ -25,7 +25,7 @@ const extractData = async ($) => {
 
       view: refineNum($(el).find("span.hit").text()),
 
-      content: await getView($(el).find("a.subject_fixed").attr("href")),
+      content: await getContent($(el).find("a.subject_fixed").attr("href")),
     };
     result.push(obj);
   }
@@ -33,6 +33,6 @@ const extractData = async ($) => {
 };
 
 module.exports = {
-  getView,
+  getContent,
   extractData,
 };
