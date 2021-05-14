@@ -1,20 +1,23 @@
 const cheerio = require("cheerio");
-const e = require("express");
 const request = require("requestretry");
 let query = encodeURI("애플워치");
 // console.log(query);
-const options = {
-  method: "GET",
-  headers: {
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
-  },
-  url: `https://search.dcinside.com/combine/q/${query}`,
-};
-const getHtml = async () => {
+let options = [];
+let res = [];
+for (let i = 0; i < 3; i++) {
+  options[i] = {
+    method: "GET",
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
+    },
+    url: `https://search.dcinside.com/post/p/${i + 1}/sort/latest/q/${query}`,
+  };
+}
+const getHtml = async (option) => {
   try {
     let ulList = [];
-    let html = await request(options);
+    let html = await request(option);
     // console.log(html);
     const $ = cheerio.load(html.body);
     const $tits = $("div.sch_result ul.sch_result_list li").map(function (
@@ -61,9 +64,24 @@ const getHtml = async () => {
       // return ulList;
     });
     // 여기서 출력
-    console.log(JSON.stringify(ulList));
+    // for 문으로 합쳐야함
+    // console.log("결과: ", ulList /*JSON.stringify(ulList)*/);
+    // console.log(...ulList);
+    res.push(...ulList);
+    // console.log(res);
+    // console.log(JSON.stringify(ulList[0]));
   } catch (error) {
     console.error(error);
   }
 };
-getHtml();
+const obj = async () => {
+  await Promise.all(
+    options.map((el) => {
+      return getHtml(el);
+    })
+  );
+  //3페이지 분량의 정보를 가져오면 디시가 차단함
+  console.log(JSON.stringify(res));
+};
+obj();
+// getHtml();
