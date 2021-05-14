@@ -17,7 +17,7 @@ const extractData = async ($) => {
     let obj = {
       title: $(el).find("a.subject_fixed").attr("title"),
 
-      date: $(el).find(".timestamp").text(),
+      date: $(el).find(".timestamp").text().split(" ")[0].replace(/-/g, "."),
 
       author: $(el).find(".nickname>img").attr("alt")
         ? $(el).find(".nickname>img").attr("alt")

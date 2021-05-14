@@ -1,4 +1,4 @@
-const { setOption, request } = require("./help");
+const { setOption, request } = require("./helper");
 
 const getView = async ($, href) => {
   // try {

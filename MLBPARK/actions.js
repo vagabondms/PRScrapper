@@ -20,7 +20,7 @@ const extractData = async ($) => {
 
     let obj = {
       title: $(el).find(".txt").attr("alt"),
-      date: $(el).find(".date").text(),
+      date: $(el).find(".date").text().replace(/-/g, "."),
       author: $(el).find(".nick").text(),
       view: $(el).find(".viewV").text(),
       content: await getContent($(el).find(".txt").attr("href")),
