@@ -1,51 +1,119 @@
 const cheerio =require('cheerio');
 const request = require('requestretry');
 
-const query = encodeURI('q=유튜브')
+
+const query = encodeURI('애플워치')
 
 const options = {
     method: 'GET',
     headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
     },
-    url:`https://pann.nate.com/search?${query}`,
+    url:`https://pann.nate.com/search/talk?q=${query}`,
 };
 
 
-request(options, function (error, response, html){
-    var $ = cheerio.load(html);
 
-    let linkList = []
-    $(".subject").each(function(){
-        eachLink = $(this).attr('href')
-        linkList.push(eachLink)
-    }) // href 링크만 가져와서 배열화 
 
-        const getData = async ()=>{
-            let resultArr = []
-            for(let i=0; i<linkList.length; i++){ // href 링크 배열 반복문을 통해 접근 후 데이터 요청
-            let options2 = {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
-                },
-                url:`https://pann.nate.com${linkList[i]}`,
-            };
-            let result = await request(options2)
-            var $ = cheerio.load(result.body);
-            var count = Number($(".tit").parent('.count').text().slice(2).replace(/\,/g,'')) // count가 부모인 class='tit'의 데이터 // 숫자에 , 있을 경우 숫자 변환 NaN replace로 , 삭제
-            var title = $("h4").text()
-            var content = $("#contentArea").not("img").text() // id='contentArea'의 자식 <p> 의 데이터 
-            var writer = $(".writer").text()
-            var date = $(".date").text()
-            let resData = {count, title, content, writer, date}
-            resultArr.push(resData)
+
+
+const getData = async (options) =>{
+
+    let resultList = []
+
+    await getList(options).then(async lastList => {
+        for(let i = 1; i <=5; i++){ // 검색횟수 제한
+            await getLast(options).then(async linkList =>{
+                await getAll(linkList).then(async res => {
+                    resultList = await resultList.concat(res)
+                })
+            })
         }
-        return JSON.stringify(resultArr)
-        }
+    })
+    return resultList
+
+}
+
+
+
+// 현재 페이지의 각 컨텐츠 접근 링크를 배열로 리턴하는 함수 
+
+const getLast = async (options) => {
+        
+    let html = await request(options)
+        var $ = cheerio.load(html.body)
+        let linkList = []
+        $(".subject").each(function(){
+            eachLink = $(this).attr('href')
+            linkList.push(eachLink)
+        })
+        return linkList
 
     
-    
-    getData().then(res=>console.log(res)) // 콘솔은 동기적 처리
+}
 
-});
+
+// 마지막 목록 찾는 함수 
+
+const getList = async (options) => {
+    
+        
+    let html = await request(options)
+    var $ = cheerio.load(html.body)
+    let lastList = Number($('.count').text().split(" ")[1])/10
+    // number 는 각 링크가 담겨있는 배열
+    
+    return lastList
+}
+
+
+// 접근한 컨텐츠에서 필요한 데이터 탐색 후 객체로 리턴하는 함수
+async function getOne(link){
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        },
+        url:`https://pann.nate.com${link}`,
+    };
+    
+
+    let html = await request(options)
+    var $ = cheerio.load(html.body)
+
+    const cotentTitle = $("h4").text()
+    const cotentDate = $(".date").text()
+    const cotentWriter = $(".writer").text()
+    const cotentView = Number($(".tit").parent('.count').text().slice(2).replace(/\,/g,''))
+    const cotents = $("#contentArea").not("img").text()
+    
+
+        let input = {}
+        input.title = cotentTitle
+        input.date = cotentDate
+        input.writer = cotentWriter
+        input.view = cotentView
+        input.contents = cotents
+
+        return input
+}
+
+
+// 현재 페이지의 모든 컨텐츠 접근 후 받은 데이터 객체를 종합하는 함수 ( 매개 변수로 링크 배열 필요 )
+async function getAll(linkList){
+
+    let list = []
+
+    //각 컨텐츠 접근하는 반복문
+    for(let i = 0; i < linkList.length; i++){
+        await getOne(linkList[i]).then(res => list.push(res))
+        }
+    
+    // 모든 컨텐츠의 데이터를 모은 list 
+    return list 
+}
+
+
+
+getData(options).then(res => console.log(res))
