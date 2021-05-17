@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-// let query = encodeURI("q=애플워치");
 let query = "애플워치";
 
 (async () => {
@@ -36,10 +35,15 @@ let query = "애플워치";
         ).jsonValue();
         // console.log(title);
         //닉네임
-        let nickname = await (
-          await (await newPage.$(".nickName")).getProperty("textContent")
-        ).jsonValue();
-        // console.log(nickname);
+        let nickname = '';
+        if(await newPage.$(".nickName")){
+          nickname = await (
+            await (await newPage.$(".nickName")).getProperty("textContent")
+          ).jsonValue();
+        }else{
+          nickname = '보배드림'
+        }
+        console.log(nickname);
         //조회수
         let views = await (
           await (
@@ -76,20 +80,22 @@ let query = "애플워치";
         });
         await newPage.close();
       }
-    // let nextButton = await(await (await page.$(".paginate a.next")).getProperty("href")).jsonValue();
-    // // 반복문으로 다음 버튼이 없을 때 까지 아래 함수 2줄을 실행하면 이론상으로 모든 페이지의 값을 가져올 수 있따.
-    // if(nextButton){
-    //   await earnData();
-    //   await page.click(".paginate a.next")
-    // }else{
-    //   return
-    // }
+    let nextButton = await(await (await page.$(".paginate a.next")).getProperty("href")).jsonValue();
+    // 반복문으로 다음 버튼이 없을 때 까지 아래 함수 2줄을 실행하면 이론상으로 모든 페이지의 값을 가져올 수 있따.
+    if(nextButton){
+      console.log(nextButton)
+      await page.click(".paginate a.next")
+      await earnData();
+    }else{
+      console.log(nextButton)
+      return
+    }
   };
-  await earnData()
-  await page.click(".paginate a.next")
+  await earnData();
+  // await page.click(".paginate a.next")
   } catch (error) {
     console.log(error);
   }
   // await page.close();
-  console.log(JSON.stringify(result));
+  // console.log(JSON.stringify(result));
 })();
