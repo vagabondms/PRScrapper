@@ -18,9 +18,9 @@ const options = {
 const getData = async (options) =>{
 
     let resultList = []
-
+    try{
     await getLast(options).then(async lastList => {
-        for(let i = 1; i <=lastList; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
+        for(let i = 1; i <=10; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
             //  페이지 넘버 매개 변수로 전달 
             await getList(i).then(async linkList =>{
                 await getAll(linkList).then(async res => {
@@ -30,6 +30,10 @@ const getData = async (options) =>{
         }
     })
     return resultList
+    }
+    catch(error){
+        console.error(error);
+    }
 
 }
 
@@ -39,6 +43,7 @@ const getData = async (options) =>{
 
 const getList = async (pageNumber) => {
     // 페이지 이동을 위한 options 설정
+    try{
     const options = {
         method: 'GET',
         headers: {
@@ -56,7 +61,10 @@ const getList = async (pageNumber) => {
             linkList.push(eachLink)
         })
         return linkList
-
+    }
+    catch(error){
+        console.error(error);
+    }
     
 }
 
@@ -65,19 +73,24 @@ const getList = async (pageNumber) => {
 
 const getLast = async (options) => {
     
-        
+    try{    
     let html = await request(options)
     var $ = cheerio.load(html.body)
     let lastList = Math.ceil(Number($('.count').text().split(" ")[1])/10)
     // number 는 각 링크가 담겨있는 배열
     
     return lastList
+    }
+    catch(error){
+        console.error(error);
+    }
+
 }
 
 
 // 접근한 컨텐츠에서 필요한 데이터 탐색 후 객체로 리턴하는 함수
 async function getOne(link){
-
+    try{
     const options = {
         method: 'GET',
         headers: {
@@ -105,12 +118,17 @@ async function getOne(link){
         input.contents = cotents
 
         return input
+    }
+    catch(error){
+        console.error(error);
+    }
+
 }
 
 
 // 현재 페이지의 모든 컨텐츠 접근 후 받은 데이터 객체를 종합하는 함수 ( 매개 변수로 링크 배열 필요 )
 async function getAll(linkList){
-
+    try{
     let list = []
 
     //각 컨텐츠 접근하는 반복문
@@ -120,6 +138,10 @@ async function getAll(linkList){
     
     // 모든 컨텐츠의 데이터를 모은 list 
     return list 
+    }
+    catch(error){
+        console.error(error);
+    }
 }
 
 
