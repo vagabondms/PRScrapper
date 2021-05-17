@@ -3,7 +3,7 @@ const puppeteer = require("puppeteer");
 const getView = async (browser, contentUrl) => {
   const contentPage = await browser.newPage();
   await contentPage.goto(`https://www.fmkorea.com${contentUrl}`, {
-    waitUntil: "domcontentloaded",
+    // waitUntil: "domcontentloaded",
   });
 
   const view = await contentPage.$eval(".side.fr", (node) =>

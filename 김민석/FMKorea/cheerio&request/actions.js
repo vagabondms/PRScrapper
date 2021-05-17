@@ -13,6 +13,7 @@ const getView = async ($, href) => {
 
 // html 값을 넣어주면 해당 페이지에서 내용 추출함
 const extractData = async ($) => {
+  
   const result = [];
   for (let el of $(".li_best2_pop0").toArray()) {
     let obj = {
