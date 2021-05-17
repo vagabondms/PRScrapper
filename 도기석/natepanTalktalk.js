@@ -19,9 +19,10 @@ const getData = async (options) =>{
 
     let resultList = []
 
-    await getList(options).then(async lastList => {
-        for(let i = 1; i <=1; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
-            await getLast(options).then(async linkList =>{
+    await getLast(options).then(async lastList => {
+        for(let i = 1; i <=lastList; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
+            //  페이지 넘버 매개 변수로 전달 
+            await getList(i).then(async linkList =>{
                 await getAll(linkList).then(async res => {
                     resultList = await resultList.concat(res)
                 })
@@ -36,7 +37,16 @@ const getData = async (options) =>{
 
 // 현재 페이지의 각 컨텐츠 접근 링크를 배열로 리턴하는 함수 
 
-const getLast = async (options) => {
+const getList = async (pageNumber) => {
+    // 페이지 이동을 위한 options 설정
+    const options = {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+        },
+        url:`https://pann.nate.com/search/talk?q=${query}&page=${pageNumber}`,
+    };
+    
         
     let html = await request(options)
         var $ = cheerio.load(html.body)
@@ -53,7 +63,7 @@ const getLast = async (options) => {
 
 // 마지막 목록 찾는 함수 
 
-const getList = async (options) => {
+const getLast = async (options) => {
     
         
     let html = await request(options)
