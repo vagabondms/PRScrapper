@@ -9,7 +9,7 @@ let query = encodeURI("q=애플워치");
     width: 1920,
     height: 1080,
   });
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     await page.goto(
       `https://bbs.ruliweb.com/search?${query}#gsc.tab=0&gsc.${query}&gsc.page=${
         i + 1
