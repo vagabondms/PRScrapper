@@ -10,19 +10,19 @@ let query = "애플워치";
     width: 1200,
     height: 900,
   });
-  for (let i = 0; i < 1; i++) {
-    await page.goto(`https://www.bobaedream.co.kr/board/bbs.php`);
-    try {
-      let searchButton = await page.$(".btn-search");
-      await searchButton.click();
-      await page.type("#keyword", query);
-      let clickButton = await page.$(".btn-submit");
-      await clickButton.click();
+  await page.goto(`https://www.bobaedream.co.kr/board/bbs.php`);
+  try {
+    let searchButton = await page.$(".btn-search");
+    await searchButton.click();
+    await page.type("#keyword", query);
+    let clickButton = await page.$(".btn-submit");
+    await clickButton.click();
+    const earnData = async() => {
       await page.waitForSelector(".search_Community ul li");
       let ulList = await page.$$(".search_Community ul li");
       for (row of ulList) {
-        let aTag = await row.$$("a");
-        let href = await (await aTag[0].getProperty("href")).jsonValue();
+      let aTag = await row.$$("a");
+      let href = await (await aTag[0].getProperty("href")).jsonValue();
         // console.log(href);
         const newPage = await browser.newPage();
         await newPage.setViewport({
@@ -76,10 +76,20 @@ let query = "애플워치";
         });
         await newPage.close();
       }
-    } catch (error) {
-      console.log(error);
-    }
+    // let nextButton = await(await (await page.$(".paginate a.next")).getProperty("href")).jsonValue();
+    // // 반복문으로 다음 버튼이 없을 때 까지 아래 함수 2줄을 실행하면 이론상으로 모든 페이지의 값을 가져올 수 있따.
+    // if(nextButton){
+    //   await earnData();
+    //   await page.click(".paginate a.next")
+    // }else{
+    //   return
+    // }
+  };
+  await earnData()
+  await page.click(".paginate a.next")
+  } catch (error) {
+    console.log(error);
   }
-  await page.close();
+  // await page.close();
   console.log(JSON.stringify(result));
 })();

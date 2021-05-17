@@ -9,7 +9,9 @@ let query = encodeURI("애플워치");
     width: 1920,
     height: 1080,
   });
-  for (let i = 0; i < 1; i++) {
+  // 100페이지는 노트북이 구져서 그런지 몰라도 요청시간 초과된다.
+  // 5페이지까지는 잘된다.
+  for (let i = 0; i < 5; i++) {
     await page.goto(
       `https://search.dcinside.com/post/p/${i + 1}/sort/latest/q/${query}`
     );
@@ -30,6 +32,7 @@ let query = encodeURI("애플워치");
           height: 1080,
         });
         await newPage.goto(`${href}`);
+        await newPage.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
         //제목
         let title = await (
           await (
