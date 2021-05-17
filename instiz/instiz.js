@@ -62,7 +62,7 @@ const getData = async () => {
     });
   });
   console.log(result.length);
-  // console.log(listRequest);
+  // console.log(result);
   return;
 };
 
