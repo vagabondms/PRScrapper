@@ -1,6 +1,5 @@
 const cheerio = require('cheerio');
 const request = require('requestretry');
-// let query = encodeURI('애플워치');
 const iconv = require('iconv-lite');
 const buffer = iconv.encode('애플워치', 'euc-kr');
 const query = escape(buffer.toString('binary'));
