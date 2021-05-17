@@ -18,4 +18,4 @@ const scrapClienByKeyword = async (keyword, maxPage) => {
   }
 };
 
-scrapClienByKeyword("애플워치", 1);
+scrapClienByKeyword("애플워치", 50);
