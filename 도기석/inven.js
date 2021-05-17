@@ -22,7 +22,7 @@ const getData = async (options) =>{
     let resultList = []
 
     await getLast(options).then(async lastList => {
-        for(let i = 1; i <=25; i++){ // 500개 까지 가능하지만 그이상은 요청시간 초과
+        for(let i = 1; i <=10; i++){ // 500개 까지 가능하지만 그이상은 요청시간 초과
             await getList(i).then(async linkList =>{
                 await getAll(linkList).then(async res => {
                     resultList = await resultList.concat(res)
@@ -45,7 +45,7 @@ const getList = async (pageNumber) => {
         headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         },
-        url:`https://pann.nate.com/search/talk?q=${query}/${pageNumber}`,
+        url:`http://www.inven.co.kr/search/webzine/article/${query}/${pageNumber}`,
     };
     
         
@@ -80,7 +80,7 @@ const getLast = async (options) => {
     return lastList
 }
 
-// getList(options).then(res => console.log(res))
+// getLast(options).then(res => console.log(res))
 
 
 // 접근한 컨텐츠에서 필요한 데이터 탐색 후 객체로 리턴하는 함수
@@ -101,7 +101,7 @@ async function getOne(link){
     const cotentTitle = $(".articleTitle > h1").text()
     const cotentDate = $(".articleDate").text()
     const cotentWriter = $(".articleWriter > span").text()
-    const cotentView = Number($(".articleHit").text().split(" ")[1].match(/\d+/)[0])
+    const cotentView = +$(".articleHit").text().split(" ")[1].match(/\d+/)
     const cotents = $("#powerbbsContent > div").text()
     
 
