@@ -1,5 +1,5 @@
 const cheerio =require('cheerio');
-const request = require('requestretry');
+const request =require('requestretry');
 
 
 const query = encodeURI('애플워치')
@@ -68,7 +68,7 @@ const getLast = async (options) => {
         
     let html = await request(options)
     var $ = cheerio.load(html.body)
-    let lastList = Number($('.count').text().split(" ")[1])/10
+    let lastList = Math.ceil(Number($('.count').text().split(" ")[1])/10)
     // number 는 각 링크가 담겨있는 배열
     
     return lastList

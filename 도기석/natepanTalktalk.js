@@ -1,5 +1,5 @@
 const cheerio =require('cheerio');
-const request = require('requestretry');
+const request =require('requestretry');
 
 
 const query = encodeURI('애플워치')
@@ -20,7 +20,7 @@ const getData = async (options) =>{
     let resultList = []
 
     await getLast(options).then(async lastList => {
-        for(let i = 1; i <=lastList; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
+        for(let i = 1; i <=10; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
             //  페이지 넘버 매개 변수로 전달 
             await getList(i).then(async linkList =>{
                 await getAll(linkList).then(async res => {
@@ -68,7 +68,7 @@ const getLast = async (options) => {
         
     let html = await request(options)
     var $ = cheerio.load(html.body)
-    let lastList = Number($('.count').text().split(" ")[1])/10
+    let lastList = Math.ceil(Number($('.count').text().split(" ")[1])/10)
     // number 는 각 링크가 담겨있는 배열
     
     return lastList
