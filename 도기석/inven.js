@@ -18,7 +18,7 @@ const options = {
 
 
 const getData = async (options) =>{
-
+    try{
     let resultList = []
 
     await getLast(options).then(async lastList => {
@@ -31,6 +31,10 @@ const getData = async (options) =>{
         }
     })
     return resultList
+    }
+    catch(error){
+        console.error(error);
+    }
 
 }
 
@@ -39,7 +43,7 @@ const getData = async (options) =>{
 // 현재 페이지의 각 컨텐츠 접근 링크를 배열로 리턴하는 함수 
 
 const getList = async (pageNumber) => {
-
+    try{
     const options = {
         method: 'GET',
         headers: {
@@ -57,7 +61,10 @@ const getList = async (pageNumber) => {
             linkList.push(eachLink)
         })
         return linkList
-
+    }
+    catch(error){
+        console.error(error);
+    }
     
 }
 
@@ -71,13 +78,17 @@ const getList = async (pageNumber) => {
 
 const getLast = async (options) => {
     
-        
+    try{
     let html = await request(options)
     var $ = cheerio.load(html.body)
     let lastList = $('.pg:last').text()
     // number 는 각 링크가 담겨있는 배열
     
     return lastList
+    }
+    catch(error){
+        console.error(error);
+    }
 }
 
 // getLast(options).then(res => console.log(res))
@@ -85,7 +96,7 @@ const getLast = async (options) => {
 
 // 접근한 컨텐츠에서 필요한 데이터 탐색 후 객체로 리턴하는 함수
 async function getOne(link){
-
+    try{
     const options = {
         method: 'GET',
         headers: {
@@ -113,13 +124,18 @@ async function getOne(link){
         input.contents = cotents
 
         return input
+    }
+    catch(error){
+        console.error(error);
+    }
+
 }
 
 // getOne('http://www.inven.co.kr/board/lol/4625/2987410').then(res => console.log(res))
 
 // 현재 페이지의 모든 컨텐츠 접근 후 받은 데이터 객체를 종합하는 함수 ( 매개 변수로 링크 배열 필요 )
 async function getAll(linkList){
-
+    try{
     let list = []
 
     //각 컨텐츠 접근하는 반복문
@@ -129,6 +145,11 @@ async function getAll(linkList){
     
     // 모든 컨텐츠의 데이터를 모은 list 
     return list 
+    }
+    catch(error){
+        console.error(error);
+    }
+
 }
 
 // getAll(list).then(res => console.log(res))
