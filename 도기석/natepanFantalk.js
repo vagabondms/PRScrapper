@@ -9,10 +9,8 @@ const options = {
     headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
     },
-    url:`https://pann.nate.com/search/talk?q=${query}`,
+    url:`https://pann.nate.com/search/fantalk?q=${query}`,
 };
-
-
 
 
 
@@ -22,7 +20,7 @@ const getData = async (options) =>{
     let resultList = []
 
     await getList(options).then(async lastList => {
-        for(let i = 1; i <=5; i++){ // 검색횟수 제한
+        for(let i = 1; i <=1; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
             await getLast(options).then(async linkList =>{
                 await getAll(linkList).then(async res => {
                     resultList = await resultList.concat(res)
@@ -86,7 +84,7 @@ async function getOne(link){
     const cotentDate = $(".date").text()
     const cotentWriter = $(".writer").text()
     const cotentView = Number($(".tit").parent('.count').text().slice(2).replace(/\,/g,''))
-    const cotents = $("#contentArea").not("img").text()
+    const cotents = $("#contentArea").not("img").text().replace(/[\t\n]/g,'')
     
 
         let input = {}
@@ -116,4 +114,4 @@ async function getAll(linkList){
 
 
 
-getData(options).then(res => console.log(res))
+getData(options).then(res => console.log(JSON.stringify(res)))

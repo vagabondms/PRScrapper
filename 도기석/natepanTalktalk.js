@@ -9,10 +9,8 @@ const options = {
     headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
     },
-    url:`http://www.inven.co.kr/search/webzine/article/${query}`,
+    url:`https://pann.nate.com/search/talk?q=${query}`,
 };
-
-
 
 
 
@@ -22,7 +20,7 @@ const getData = async (options) =>{
     let resultList = []
 
     await getList(options).then(async lastList => {
-        for(let i = 1; i <=25; i++){ // 500개 까지 가능하지만 그이상은 요청시간 초과
+        for(let i = 1; i <=1; i++){ // 검색횟수 제한 인벤과 마찬가지로 일정 데이터 초과 시 요청 시간 초과
             await getLast(options).then(async linkList =>{
                 await getAll(linkList).then(async res => {
                     resultList = await resultList.concat(res)
@@ -43,7 +41,7 @@ const getLast = async (options) => {
     let html = await request(options)
         var $ = cheerio.load(html.body)
         let linkList = []
-        $(".item > h1 > .name").each(function(){
+        $(".subject").each(function(){
             eachLink = $(this).attr('href')
             linkList.push(eachLink)
         })
@@ -53,11 +51,6 @@ const getLast = async (options) => {
 }
 
 
-// getLast(options).then(res => console.log(res))
-
-
-
-
 // 마지막 목록 찾는 함수 
 
 const getList = async (options) => {
@@ -65,13 +58,11 @@ const getList = async (options) => {
         
     let html = await request(options)
     var $ = cheerio.load(html.body)
-    let lastList = $('.pg:last').text()
+    let lastList = Number($('.count').text().split(" ")[1])/10
     // number 는 각 링크가 담겨있는 배열
     
     return lastList
 }
-
-// getList(options).then(res => console.log(res))
 
 
 // 접근한 컨텐츠에서 필요한 데이터 탐색 후 객체로 리턴하는 함수
@@ -82,18 +73,18 @@ async function getOne(link){
         headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
         },
-        url:`${link}`,
+        url:`https://pann.nate.com${link}`,
     };
     
 
     let html = await request(options)
     var $ = cheerio.load(html.body)
 
-    const cotentTitle = $(".articleTitle > h1").text()
-    const cotentDate = $(".articleDate").text()
-    const cotentWriter = $(".articleWriter > span").text()
-    const cotentView = Number($(".articleHit").text().split(" ")[1].match(/\d+/)[0])
-    const cotents = $("#powerbbsContent > div").text()
+    const cotentTitle = $("h4").text()
+    const cotentDate = $(".date").text()
+    const cotentWriter = $(".writer").text()
+    const cotentView = Number($(".tit").parent('.count').text().slice(2).replace(/\,/g,''))
+    const cotents = $("#contentArea").not("img").text().replace(/[\t\n]/g,'')
     
 
         let input = {}
@@ -106,7 +97,6 @@ async function getOne(link){
         return input
 }
 
-// getOne('http://www.inven.co.kr/board/lol/4625/2987410').then(res => console.log(res))
 
 // 현재 페이지의 모든 컨텐츠 접근 후 받은 데이터 객체를 종합하는 함수 ( 매개 변수로 링크 배열 필요 )
 async function getAll(linkList){
@@ -121,8 +111,6 @@ async function getAll(linkList){
     // 모든 컨텐츠의 데이터를 모은 list 
     return list 
 }
-
-// getAll(list).then(res => console.log(res))
 
 
 
