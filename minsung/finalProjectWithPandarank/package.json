@@ -14,6 +14,7 @@
     "cheerio": "*",
     "express": "^4.17.1",
     "puppeteer": "^9.1.1",
+    "request": "^2.88.2",
     "requestretry": "^5.0.0"
   }
 }
