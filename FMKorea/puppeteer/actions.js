@@ -1,5 +1,3 @@
-const puppeteer = require("puppeteer");
-
 const getView = async (browser, contentUrl) => {
   const contentPage = await browser.newPage();
   await contentPage.goto(`https://www.fmkorea.com${contentUrl}`, {
@@ -13,16 +11,14 @@ const getView = async (browser, contentUrl) => {
   return view;
 };
 
-const extractData = async (keyword, page) => {
+const extractData = async (browser, mainpage, keyword, page) => {
   let result = [];
-  const browser = await puppeteer.launch({ headless: true });
-  const curPage = await browser.newPage();
-  await curPage.goto(
+  await mainpage.goto(
     `https://www.fmkorea.com/?vid=&mid=best&category=&listStyle=webzine&search_keyword=${encodeURI(
       keyword
     )}&search_target=title_content&page=${page}`
   );
-  const lists = await curPage.$$(".li_best2_pop0");
+  const lists = await mainpage.$$(".li_best2_pop0");
 
   for (let i of lists) {
     const title = await i.$eval("a.hotdeal_var8", (node) =>
@@ -41,7 +37,6 @@ const extractData = async (keyword, page) => {
 
     result.push({ title, date, author, view });
   }
-  await browser.close();
   return result;
 };
 
