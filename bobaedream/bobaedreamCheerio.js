@@ -75,7 +75,7 @@ const getHtml = async () => {
         date:$date
       })
     })
-    // 한페이지 성공
+    // 한페이지 성공 집에가서 푸쉬해야지
     console.log(res)
   } catch (error) {
       console.error(error);
